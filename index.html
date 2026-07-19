@@ -135,7 +135,17 @@ nav.links a:hover::after{transform:scaleX(1);transform-origin:left}
 .scroll-hint{position:absolute;right:clamp(1.25rem,4vw,3rem);bottom:2.2rem;z-index:2;writing-mode:vertical-rl;font-size:.68rem;letter-spacing:.35em;text-transform:uppercase;color:var(--ivory-dim);display:flex;align-items:center;gap:.8rem}
 .scroll-hint::after{content:"";width:1px;height:52px;background:linear-gradient(var(--gold),transparent);animation:drip 2.2s ease-in-out infinite}
 @keyframes drip{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
-@media(max-width:640px){.scroll-hint{display:none}}
+@media(max-width:640px){
+  .scroll-hint{display:none}
+  /* Keep hero content clear of the fixed header so the eyebrow doesn't collide with the brand */
+  .hero{align-items:flex-end;padding-top:calc(76px + 1.5rem)}
+  .hero-content{padding-bottom:clamp(2.5rem,8vw,4rem)}
+  .hero .eyebrow{letter-spacing:.2em;font-size:.68rem}
+  .hero h1{margin:.7rem 0 1.1rem}
+  .hero p{margin-bottom:1.8rem}
+  .hero-meta{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem 1.4rem;margin-top:2rem;padding-top:1.3rem}
+  .hero-meta div strong{font-size:1.4rem}
+}
 
 /* ---------- Intro ---------- */
 .intro{background:var(--ink)}
