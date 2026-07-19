@@ -107,8 +107,8 @@ nav.links a:hover::after{transform:scaleX(1);transform-origin:left}
 @media(max-width:920px){
   nav.links,.nav-cta{display:none}
   .burger{display:block}
-  .mobile-menu{display:block;position:fixed;inset:76px 0 auto 0;background:rgba(22,18,30,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--line-soft);padding:1.5rem clamp(1.25rem,4vw,3rem) 2.2rem;transform:translateY(-110%);transition:transform .4s;z-index:99}
-  .mobile-menu.open{transform:translateY(0)}
+  .mobile-menu{display:block;position:fixed;inset:76px 0 auto 0;background:rgba(22,18,30,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--line-soft);padding:1.5rem clamp(1.25rem,4vw,3rem) 2.2rem;transform:translateY(-110%);visibility:hidden;transition:transform .4s,visibility 0s linear .4s;z-index:99}
+  .mobile-menu.open{transform:translateY(0);visibility:visible;transition:transform .4s,visibility 0s}
   .mobile-menu a{display:block;padding:.85rem 0;font-family:var(--font-display);font-size:1.35rem;border-bottom:1px solid var(--line-soft);color:var(--ivory)}
   .mobile-menu a:last-child{border:0;color:var(--gold)}
 }
@@ -137,6 +137,8 @@ nav.links a:hover::after{transform:scaleX(1);transform-origin:left}
 @keyframes drip{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 @media(max-width:640px){
   .scroll-hint{display:none}
+  /* Give the brand more breathing room from the top edge (header stays 76px tall) */
+  .nav{height:70px;padding-top:0.2rem}
   /* Keep hero content clear of the fixed header so the eyebrow doesn't collide with the brand */
   .hero{align-items:flex-end;padding-top:calc(76px + 1.5rem)}
   .hero-content{padding-bottom:clamp(2.5rem,8vw,4rem)}
