@@ -206,6 +206,14 @@ nav.links a:hover::after{transform:scaleX(1);transform-origin:left}
 .masonry figure:hover figcaption{opacity:1}
 @media(max-width:880px){.masonry{columns:2}}
 @media(max-width:560px){.masonry{columns:1}}
+/* Collapsible gallery: clipped with a soft fade until expanded */
+.gallery-clip{position:relative;overflow:hidden;max-height:820px;transition:max-height .7s cubic-bezier(.4,0,.2,1)}
+@media(max-width:880px){.gallery-clip{max-height:700px}}
+@media(max-width:560px){.gallery-clip{max-height:1250px}}
+.gallery-clip::after{content:"";position:absolute;left:0;right:0;bottom:0;height:180px;background:linear-gradient(transparent,var(--ink));pointer-events:none;transition:opacity .5s}
+.gallery-clip.show-all::after{opacity:0}
+.gallery-more{text-align:center;margin-top:2.4rem}
+.gallery-more button{cursor:pointer;font-family:inherit}
 .lightbox{position:fixed;inset:0;background:rgba(12,10,17,.94);z-index:200;display:none;align-items:center;justify-content:center;padding:3rem}
 .lightbox.open{display:flex}
 .lightbox img{max-width:min(92vw,1100px);max-height:84vh;object-fit:contain;box-shadow:0 40px 90px rgba(0,0,0,.6)}
@@ -276,7 +284,11 @@ nav.links a:hover::after{transform:scaleX(1);transform-origin:left}
 .map-card h3{font-family:var(--font-display);font-weight:500;font-size:1.5rem;margin-bottom:.5rem}
 .map-card p{font-size:.92rem;color:var(--ivory-dim);margin-bottom:1.1rem}
 .map-card a{font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:500}
-@media(max-width:640px){.map-card{position:static;transform:none;max-width:none;margin:0;border-left:0;border-right:0}}
+@media(max-width:640px){
+  .map-frame{height:auto}
+  .map-frame iframe{height:clamp(300px,55vw,380px);display:block}
+  .map-card{position:static;transform:none;max-width:none;margin:0;border-left:0;border-right:0}
+}
 
 /* ---------- Legal modals ---------- */
 .legal-modal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-start;justify-content:center;background:rgba(12,10,17,.9);overflow-y:auto;padding:clamp(1rem,5vh,4rem) 1rem}
@@ -478,6 +490,7 @@ footer{background:var(--ink);border-top:1px solid var(--line-soft);padding:3.5re
       </div>
       <p>Echte Momente aus echten Festen im Partyhaus – klicken Sie sich durch.</p>
     </div>
+    <div class="gallery-clip" id="galleryClip">
     <div class="masonry reveal" id="masonry">
       <figure><img src="https://static.wixstatic.com/media/4c797f_16493804d04a4dfd889e3dcc0c0d1593f003.jpg/v1/fill/w_800,h_1420,al_c,q_85/g1.jpg" alt="Festliche Dekoration im Saal" loading="lazy"><figcaption>Dekoration nach Wunsch</figcaption></figure>
       <figure><img src="https://static.wixstatic.com/media/4c797f_1d9dc09d1b68497da3bddd52070b0bd4~mv2.jpg/v1/fill/w_1000,h_666,al_c,q_85/g2.jpg" alt="Gedeckte Tafel" loading="lazy"><figcaption>Festliche Tafel</figcaption></figure>
@@ -488,6 +501,10 @@ footer{background:var(--ink);border-top:1px solid var(--line-soft);padding:3.5re
       <figure><img src="https://static.wixstatic.com/media/4c797f_2def5d0027614baa8c63e8c6d189f0d7f003.jpg/v1/fill/w_800,h_1420,al_c,q_85/g7.jpg" alt="Dekoration und Ambiente" loading="lazy"><figcaption>Ambiente</figcaption></figure>
       <figure><img src="https://static.wixstatic.com/media/4c797f_b890fff3a743469db7e2f473e7e28c6e~mv2.jpg/v1/fill/w_800,h_1052,al_c,q_85/g8.jpg" alt="Festliche Details" loading="lazy"><figcaption>Bereit für die Gäste</figcaption></figure>
       <figure><img src="https://static.wixstatic.com/media/4c797f_911d666d4ec94af6913bc4e7868680f3f003.jpg/v1/fill/w_800,h_1420,al_c,q_85/g9.jpg" alt="Abendstimmung im Partyhaus" loading="lazy"><figcaption>Abendstimmung</figcaption></figure>
+    </div>
+    </div>
+    <div class="gallery-more reveal">
+      <button class="btn btn-gold" id="galleryToggle" type="button" aria-expanded="false" aria-controls="masonry">Mehr Bilder anzeigen</button>
     </div>
   </div>
 </section>
@@ -756,6 +773,27 @@ const burger=document.getElementById('burger'),menu=document.getElementById('mob
 const setMenu=open=>{menu.classList.toggle('open',open);burger.setAttribute('aria-expanded',String(open));burger.setAttribute('aria-label',open?'Menü schließen':'Menü öffnen')};
 burger.addEventListener('click',()=>setMenu(!menu.classList.contains('open')));
 menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+const galleryToggle=document.getElementById('galleryToggle'),galleryClip=document.getElementById('galleryClip');
+galleryClip.addEventListener('transitionend',e=>{
+  // Once fully expanded, release the clip so late-loading images aren't cut off
+  if(e.propertyName==='max-height'&&galleryClip.classList.contains('show-all'))galleryClip.style.maxHeight='none';
+});
+galleryToggle.addEventListener('click',()=>{
+  const open=!galleryClip.classList.contains('show-all');
+  if(open){
+    galleryClip.style.maxHeight=galleryClip.scrollHeight+'px';
+    galleryClip.classList.add('show-all');
+  }else{
+    galleryClip.style.maxHeight=galleryClip.scrollHeight+'px';
+    void galleryClip.offsetHeight; // pin current height, then let CSS collapse animate
+    galleryClip.style.maxHeight='';
+    galleryClip.classList.remove('show-all');
+    const g=document.getElementById('galerie');
+    if(g.getBoundingClientRect().top<0)g.scrollIntoView({behavior:'smooth'});
+  }
+  galleryToggle.setAttribute('aria-expanded',String(open));
+  galleryToggle.textContent=open?'Weniger anzeigen':'Mehr Bilder anzeigen';
+});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lbClose=document.getElementById('lbClose');
